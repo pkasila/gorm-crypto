@@ -4,7 +4,6 @@ import (
 	"github.com/pkosilo/gorm-crypto/encryption"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"path/filepath"
 	"testing"
 )
 
@@ -15,16 +14,13 @@ type TestModel struct {
 }
 
 func TestGormIntegration(t *testing.T) {
-	tmpDir := t.TempDir()
-	dbFile := filepath.Join(tmpDir, "test.db")
-
 	privateKey, publicKey, err := encryption.GenerateKeyPair(4096)
 	if err != nil {
 		t.Fatalf("Failed to generate key pair: %s\n", err.Error())
 	}
 	InitFromKeyPair(privateKey, publicKey)
 
-	db, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("Cannot open test DB: %s\n", err.Error())
 	}
