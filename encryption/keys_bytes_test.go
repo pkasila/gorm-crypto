@@ -4,6 +4,9 @@ import "testing"
 
 func TestKeysBytes(t *testing.T) {
 	privateKey, publicKey, err := GenerateKeyPair(4096)
+	if err != nil {
+		t.Fatalf("Failed to generate key pair: %s\n", err.Error())
+	}
 
 	privBytes := PrivateKeyToBytes(privateKey)
 	pubBytes, err := PublicKeyToBytes(publicKey)

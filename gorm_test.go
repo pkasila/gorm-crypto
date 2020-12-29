@@ -19,6 +19,9 @@ func TestGormIntegration(t *testing.T) {
 	dbFile := filepath.Join(tmpDir, "test.db")
 
 	privateKey, publicKey, err := encryption.GenerateKeyPair(4096)
+	if err != nil {
+		t.Fatalf("Failed to generate key pair: %s\n", err.Error())
+	}
 	InitFromKeyPair(privateKey, publicKey)
 
 	db, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{})
