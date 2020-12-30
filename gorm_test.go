@@ -1,4 +1,4 @@
-package gorm_crypto
+package gormcrypto
 
 import (
 	"github.com/pkosilo/gorm-crypto/encryption"

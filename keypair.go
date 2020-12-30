@@ -1,4 +1,4 @@
-package gorm_crypto
+package gormcrypto
 
 import "crypto/rsa"
 
