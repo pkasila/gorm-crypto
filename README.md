@@ -52,7 +52,7 @@ if _, err := os.Stat("private_key.pem"); os.IsNotExist(err) {
 }
 
 // Use privateKey and publicKey to initialize gorm_crypto
-gorm_crypto.InitFromKeyPair(privateKey, publicKey)
+gormcrypto.InitFromKeyPair(privateKey, publicKey)
 ```
 
 ## Use it in a model
@@ -63,7 +63,7 @@ type Application struct {
   Name               string                      `json:"name"`
   Phone              string                      `json:"phone"`
   Email              string                      `json:"email"`
-  Address            gorm_crypto.EncryptedValue  `json:"address"`
+  Address            gormcrypto.EncryptedValue  `json:"address"`
 }
 ```
 
@@ -74,7 +74,7 @@ application := Application {
   Name: "Anonymous",
   Phone: "+375290000000",
   Email: "example@example.com",
-  Address: gorm_crypto.EncryptedValue{Raw: "Oktyabr'skaya Ploshchad' 1, Minsk 220030"},
+  Address: gormcrypto.EncryptedValue{Raw: "Oktyabr'skaya Ploshchad' 1, Minsk 220030"},
 }
 
 if err = models.DB.Create(&model).Error; err != nil {
