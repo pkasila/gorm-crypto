@@ -9,7 +9,7 @@ import (
 
 type TestModel struct {
 	gorm.Model
-	Name	string
+	Name    string
 	Address EncryptedValue
 }
 

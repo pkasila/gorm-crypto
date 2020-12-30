@@ -9,7 +9,7 @@ import (
 )
 
 type EncryptedValue struct {
-	Raw	interface{}
+	Raw interface{}
 }
 
 // Scan scan value into Jsonb, implements sql.Scanner interface

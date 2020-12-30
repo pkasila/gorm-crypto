@@ -31,4 +31,3 @@ func BytesToPublicKey(pub []byte) (*rsa.PublicKey, error) {
 	}
 	return key, nil
 }
-
