@@ -62,7 +62,12 @@ gormcrypto.Init(algorithms.NewRSA(privateKey, publicKey), serialization.NewJSON(
 To use this library with AES, you need to initialize it with `algorithm.AES` with your key passed.
 There is an example how to initialize library with AES:
 ```golang
-gormcrypto.Init(algorithms.NewAES([]byte("passphrasewhichneedstobe32bytes!")), serialization.NewJSON())
+aes, err := algorithms.NewAES([]byte("passphrasewhichneedstobe32bytes!"))
+// algorithms.NewAES can fall with an error, so you should handle it
+if err != nil {
+panic(err)
+}
+gorm.Init(aes, serialization.NewJSON())
 ```
 
 ## Use it in a model
