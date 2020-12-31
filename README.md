@@ -9,13 +9,13 @@ go get github.com/pkosilo/gorm-crypto
 
 # How to use it?
 ## Initialize
-First of all you need to initialize the library. To do so, you need to decide which algorithm you want to
-use. (By the way, it's possible to select serializer/deserialize, so in the future you will be able to
-customize your flow even more).
+First of all you need to initialize the library **before migrating models**. To do so, you need to decide which
+algorithm you want to use. (By the way, it's possible to select serializer/deserialize, so in the future you will
+be able to customize your flow even more).
 ### RSA
 If you want to use RSA, then you need to generate or load key pair and initialize library with `algorithm.RSA`
 with your private and public keys. To do so, you can simply run code **like** this (you can also use different
-public and private key files) in your app **before migrating models**:
+public and private key files) in your app:
 ```golang
 var privateKey *rsa.PrivateKey
 var publicKey *rsa.PublicKey
