@@ -9,7 +9,7 @@ import (
 type RSA struct {
 	Algorithm
 	PrivateKey *rsa.PrivateKey
-	PublicKey *rsa.PublicKey
+	PublicKey  *rsa.PublicKey
 }
 
 func NewRSA(privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey) *RSA {

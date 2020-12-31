@@ -3,6 +3,7 @@ package gormcrypto
 import (
 	"github.com/pkosilo/gorm-crypto/algorithms"
 	"github.com/pkosilo/gorm-crypto/helpers"
+	"github.com/pkosilo/gorm-crypto/serialization"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"testing"
@@ -20,7 +21,7 @@ func TestRSA(t *testing.T) {
 		t.Fatalf("Failed to generate key pair: %s\n", err.Error())
 	}
 
-	Init(algorithms.NewRSA(privateKey, publicKey))
+	Init(algorithms.NewRSA(privateKey, publicKey), serialization.NewJSON())
 
 	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 	if err != nil {
