@@ -17,11 +17,11 @@ func TestRSAKeysConversion(t *testing.T) {
 	}
 
 	// Convert back to rsa.PrivateKey and rsa.PublicKey
-	privateKey, err = RSABytesToPrivateKey(privBytes)
+	_, err = RSABytesToPrivateKey(privBytes)
 	if err != nil {
 		t.Fatalf("Failed to convert bytes to private key: %s\n", err.Error())
 	}
-	publicKey, err = RSABytesToPublicKey(pubBytes)
+	_, err = RSABytesToPublicKey(pubBytes)
 	if err != nil {
 		t.Fatalf("Failed to convert bytes to public key: %s\n", err.Error())
 	}
