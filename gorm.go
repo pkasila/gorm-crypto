@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/pkosilo/gorm-crypto/encryption"
 )
 
 type EncryptedValue struct {
@@ -19,7 +18,7 @@ func (j *EncryptedValue) Scan(value interface{}) error {
 		return errors.New(fmt.Sprint("Failed to unmarshal value:", value))
 	}
 
-	bytes, err := encryption.DecryptWithPrivateKey(bytes, PrivateKey)
+	bytes, err := Algorithm.Decrypt(bytes)
 	if err != nil {
 		return err
 	}
@@ -42,5 +41,5 @@ func (j EncryptedValue) Value() (driver.Value, error) {
 		return nil, err
 	}
 
-	return encryption.EncryptWithPublicKey(bytes, PublicKey)
+	return Algorithm.Encrypt(bytes)
 }

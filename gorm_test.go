@@ -1,7 +1,8 @@
 package gormcrypto
 
 import (
-	"github.com/pkosilo/gorm-crypto/encryption"
+	"github.com/pkosilo/gorm-crypto/algorithms"
+	"github.com/pkosilo/gorm-crypto/helpers"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"testing"
@@ -13,12 +14,13 @@ type TestModel struct {
 	Address EncryptedValue
 }
 
-func TestGormIntegration(t *testing.T) {
-	privateKey, publicKey, err := encryption.GenerateKeyPair(4096)
+func TestRSA(t *testing.T) {
+	privateKey, publicKey, err := helpers.RSAGenerateKeyPair(4096)
 	if err != nil {
 		t.Fatalf("Failed to generate key pair: %s\n", err.Error())
 	}
-	InitFromKeyPair(privateKey, publicKey)
+
+	Init(algorithms.NewRSA(privateKey, publicKey))
 
 	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 	if err != nil {
