@@ -2,45 +2,42 @@ package gormcrypto
 
 import (
 	"database/sql/driver"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/pkosilo/gorm-crypto/encryption"
 )
 
 type EncryptedValue struct {
-	Raw interface{}
+	Raw interface{}	`json:"Raw"`
 }
 
-// Scan scan value into Jsonb, implements sql.Scanner interface
+// Scan decrypts and deserializes value from DB, implements sql.Scanner interface
 func (j *EncryptedValue) Scan(value interface{}) error {
 	bytes, ok := value.([]byte)
 	if !ok {
 		return errors.New(fmt.Sprint("Failed to unmarshal value:", value))
 	}
 
-	bytes, err := encryption.DecryptWithPrivateKey(bytes, PrivateKey)
+	bytes, err := Algorithm.Decrypt(bytes)
 	if err != nil {
 		return err
 	}
 
-	var encValue EncryptedValue
-	err = json.Unmarshal(bytes, &encValue)
+	encValue, err := Serializer.Deserialize(bytes)
 	if err != nil {
 		return err
 	}
-	*j = encValue
+	j.Raw = (*encValue).(map[string]interface{})["Raw"]
 
 	return nil
 }
 
-// Value return json value, implement driver.Valuer interface
+// Value returns serialized and encrypted value, implement driver.Valuer interface
 func (j EncryptedValue) Value() (driver.Value, error) {
-	bytes, err := json.Marshal(j)
+	bytes, err := Serializer.Serialize(j)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return encryption.EncryptWithPublicKey(bytes, PublicKey)
+	return Algorithm.Encrypt(bytes)
 }

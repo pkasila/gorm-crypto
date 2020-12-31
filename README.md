@@ -8,10 +8,14 @@ go get github.com/pkosilo/gorm-crypto
 ```
 
 # How to use it?
-## Initialize keypair
-First of all you need to initialize your RSA keypair, which will be used to encrypt data.
-To do so, you can simply run code **like** this (you can also use different public and private key files)
-in your app **before migrating models**:
+## Initialize
+First of all you need to initialize the library **before migrating models**. To do so, you need to decide which
+algorithm you want to use. (By the way, it's possible to select serializer/deserialize, so in the future you will
+be able to customize your flow even more).
+### RSA
+If you want to use RSA, then you need to generate or load key pair and initialize library with `algorithm.RSA`
+with your private and public keys. To do so, you can simply run code **like** this (you can also use different
+public and private key files) in your app:
 ```golang
 var privateKey *rsa.PrivateKey
 var publicKey *rsa.PublicKey
@@ -21,14 +25,14 @@ if _, err := os.Stat("private_key.pem"); os.IsNotExist(err) {
   // There is no PEM
   
   // Generate key pair
-  privateKey, publicKey, err = encryption.GenerateKeyPair(4096)
+  privateKey, publicKey, err = helpers.RSAGenerateKeyPair(4096)
 
   if err != nil {
     panic(err)
   }
 
   // Store it
-  privateKeyBytes := encryption.PrivateKeyToBytes(privateKey)
+  privateKeyBytes := helpers.RSAPrivateKeyToBytes(privateKey)
   err := ioutil.WriteFile("private_key.pem", privateKeyBytes, 0644)
 
   if err != nil {
@@ -44,15 +48,26 @@ if _, err := os.Stat("private_key.pem"); os.IsNotExist(err) {
   }
 
   // Bytes to private key
-  privateKey, err = encryption.BytesToPrivateKey(bytes)
+  privateKey, err = helpers.RSABytesToPrivateKey(bytes)
   if err != nil {
     panic(err)
   }
   publicKey = &privateKey.PublicKey
 }
 
-// Use privateKey and publicKey to initialize gorm_crypto
-gormcrypto.InitFromKeyPair(privateKey, publicKey)
+// Use privateKey and publicKey to initialize gormcrypto
+gormcrypto.Init(algorithms.NewRSA(privateKey, publicKey), serialization.NewJSON())
+```
+### AES
+To use this library with AES, you need to initialize it with `algorithm.AES` with your key passed.
+There is an example how to initialize library with AES:
+```golang
+aes, err := algorithms.NewAES([]byte("passphrasewhichneedstobe32bytes!"))
+// algorithms.NewAES can fall with an error, so you should handle it
+if err != nil {
+panic(err)
+}
+gorm.Init(aes, serialization.NewJSON())
 ```
 
 ## Use it in a model
