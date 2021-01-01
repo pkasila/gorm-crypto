@@ -17,15 +17,28 @@ func (j *EncryptedValue) Scan(value interface{}) error {
 		return errors.New(fmt.Sprint("Failed to unmarshal value:", value))
 	}
 
-	bytes, err := Algorithm.Decrypt(bytes)
-	if err != nil {
-		return err
+	var encValue *interface{}
+	var selectionError error
+
+	for _, algo := range Algorithms {
+		var dBytes []byte
+		dBytes, selectionError = algo.Decrypt(bytes)
+		if selectionError != nil {
+			continue
+		}
+
+		for _, serializer := range Serializers {
+			encValue, selectionError = serializer.Deserialize(dBytes)
+			if selectionError != nil {
+				continue
+			}
+		}
 	}
 
-	encValue, err := Serializer.Deserialize(bytes)
-	if err != nil {
-		return err
+	if selectionError != nil {
+		return selectionError
 	}
+
 	j.Raw = (*encValue).(map[string]interface{})["Raw"]
 
 	return nil
@@ -33,11 +46,11 @@ func (j *EncryptedValue) Scan(value interface{}) error {
 
 // Value returns serialized and encrypted value, implement driver.Valuer interface
 func (j EncryptedValue) Value() (driver.Value, error) {
-	bytes, err := Serializer.Serialize(j)
+	bytes, err := Serializers[0].Serialize(j)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return Algorithm.Encrypt(bytes)
+	return Algorithms[0].Encrypt(bytes)
 }
