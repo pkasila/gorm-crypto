@@ -65,10 +65,25 @@ There is an example how to initialize library with AES:
 aes, err := algorithms.NewAES([]byte("passphrasewhichneedstobe32bytes!"))
 // algorithms.NewAES can fall with an error, so you should handle it
 if err != nil {
-panic(err)
+  panic(err)
 }
 gorm.Init(aes, serialization.NewJSON())
 ```
+### Fallbacks
+Sometimes you may need to change your algorithm or rotate the keys, the library lets you do so.
+You just need to initialize the library with `InitWithFallbacks`:
+```golang
+// The fallback algorithm
+rsa := algorithms.NewRSA(privateKey, publicKey)
+
+// The main algorithm
+aes, err := algorithms.NewAES([]byte("passphrasewhichneedstobe32bytes!"))
+if err != nil {
+  panic(err)
+}
+gormcrypto.InitWithFallbacks([]algorithms.Algorithm{aes, rsa}, []serialization.Serializer{serialization.NewJSON()})
+```
+The first algorithm/serializer in the array is the main algorithm, others are the fallback algorithms.
 
 ## Use it in a model
 There is an example of a model with `EncryptedValue`:
