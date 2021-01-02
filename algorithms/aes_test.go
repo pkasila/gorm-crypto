@@ -30,7 +30,7 @@ func TestAES256GCMEncryptDecryptCycle(t *testing.T) {
 }
 
 func TestAES256CBCEncryptDecryptCycle(t *testing.T) {
-	aes, err := NewAES256CBC([]byte("passphrasewhichneedstobe32bytes!"), []byte("0000000000000000"))
+	aes, err := NewAES256CBC([]byte("passphrasewhichneedstobe32bytes!"))
 	if err != nil {
 		t.Fatalf("Failed to setup AES: %s\n", err.Error())
 	}
