@@ -9,12 +9,18 @@ import (
 	"io"
 )
 
-type AES struct {
+type AES256GCM struct {
 	Algorithm
 	AEAD cipher.AEAD
 }
 
-func NewAES(key []byte) (*AES, error) {
+// Deprecated: NewAES creates instance of AES256GCM with passed key (should be replaced with NewAES256GCM)
+func NewAES(key []byte) (*AES256GCM, error) {
+	return NewAES256GCM(key)
+}
+
+// NewAES256GCM creates instance of AES256GCM with passed key
+func NewAES256GCM(key []byte) (*AES256GCM, error) {
 	aesCipher, err := aes.NewCipher(key)
 
 	if err != nil {
@@ -27,13 +33,13 @@ func NewAES(key []byte) (*AES, error) {
 		return nil, err
 	}
 
-	return &AES {
+	return &AES256GCM {
 		AEAD: aesGCM,
 	}, nil
 }
 
 // Encrypt encrypts data with key
-func (algo *AES) Encrypt(msg []byte) ([]byte, error) {
+func (algo *AES256GCM) Encrypt(msg []byte) ([]byte, error) {
 	nonce := make([]byte, algo.AEAD.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 		return nil, err
@@ -43,7 +49,7 @@ func (algo *AES) Encrypt(msg []byte) ([]byte, error) {
 }
 
 // Decrypt decrypts data with key
-func (algo *AES) Decrypt(ciphertext []byte) ([]byte, error) {
+func (algo *AES256GCM) Decrypt(ciphertext []byte) ([]byte, error) {
 	nonceSize := algo.AEAD.NonceSize()
 	if len(ciphertext) < nonceSize {
 		fmt.Println(errors.New("CipherTextIsNotValid"))
