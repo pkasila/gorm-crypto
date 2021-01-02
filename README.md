@@ -58,11 +58,22 @@ if _, err := os.Stat("private_key.pem"); os.IsNotExist(err) {
 // Use privateKey and publicKey to initialize gormcrypto
 gormcrypto.Init(algorithms.NewRSA(privateKey, publicKey), serialization.NewJSON())
 ```
-### AES
-To use this library with AES, you need to initialize it with `algorithm.AES` with your key passed.
-There is an example how to initialize library with AES:
+### AES256GCM
+To use this library with AES256GCM, you need to initialize it with `algorithm.AES256GCM` with your key passed.
+There is an example how to initialize library with AES256GCM:
 ```golang
-aes, err := algorithms.NewAES([]byte("passphrasewhichneedstobe32bytes!"))
+aes, err := algorithms.NewAES256GCM([]byte("passphrasewhichneedstobe32bytes!"))
+// algorithms.NewAES can fall with an error, so you should handle it
+if err != nil {
+  panic(err)
+}
+gorm.Init(aes, serialization.NewJSON())
+```
+### AES256CBC
+To use this library with AES256CBC, you need to initialize it with `algorithm.AES256CBC` with your key and iv passed.
+There is an example how to initialize library with AES256CBC:
+```golang
+aes, err := algorithms.NewAES256CBC([]byte("passphrasewhichneedstobe32bytes!"), []byte("0000000000000000"))
 // algorithms.NewAES can fall with an error, so you should handle it
 if err != nil {
   panic(err)
