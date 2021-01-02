@@ -70,10 +70,10 @@ if err != nil {
 gorm.Init(aes, serialization.NewJSON())
 ```
 ### AES256CBC
-To use this library with AES256CBC, you need to initialize it with `algorithm.AES256CBC` with your key and iv passed.
+To use this library with AES256CBC, you need to initialize it with `algorithm.AES256CBC` with your key passed.
 There is an example how to initialize library with AES256CBC:
 ```golang
-aes, err := algorithms.NewAES256CBC([]byte("passphrasewhichneedstobe32bytes!"), []byte("0000000000000000"))
+aes, err := algorithms.NewAES256CBC([]byte("passphrasewhichneedstobe32bytes!"))
 // algorithms.NewAES can fall with an error, so you should handle it
 if err != nil {
   panic(err)
