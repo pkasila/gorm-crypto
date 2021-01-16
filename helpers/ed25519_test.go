@@ -2,21 +2,21 @@ package helpers
 
 import "testing"
 
-func TestECDSAKeysConversion(t *testing.T) {
+func TestEd25519KeysConversion(t *testing.T) {
 	// Generate key pair
-	privateKey, publicKey, err := ECDSAGenerateKeyPair()
+	privateKey, publicKey, err := Ed25519GenerateKeyPair()
 	if err != nil {
 		t.Fatalf("Failed to generate key pair: %s\n", err.Error())
 	}
 
 	// Convert to bytes
-	privBytes := ECDSAPrivateKeyToBytes(privateKey)
-	pubBytes := ECDSAPublicKeyToBytes(publicKey)
+	privBytes := Ed25519PrivateKeyToBytes(&privateKey)
+	pubBytes := Ed25519PublicKeyToBytes(&publicKey)
 
 	// Convert back to rsa.PrivateKey and rsa.PublicKey
-	_, err = ECDSABytesToPrivateKey(privBytes)
+	_, err = Ed25519BytesToPrivateKey(privBytes)
 	if err != nil {
 		t.Fatalf("Failed to convert bytes to private key: %s\n", err.Error())
 	}
-	_ = ECDSABytesToPublicKey(pubBytes)
+	_ = Ed25519BytesToPublicKey(pubBytes)
 }
