@@ -1,36 +1,26 @@
 package signing
 
 import (
-	"crypto/ecdsa"
-	"crypto/rand"
-	"crypto/sha256"
-	"errors"
+	"crypto/ed25519"
 )
 
-type ECDSA struct {
+type Ed25519 struct {
 	SignatureAlgorithm
-	Private *ecdsa.PrivateKey
-	Public  *ecdsa.PublicKey
+	Private *ed25519.PrivateKey
+	Public  *ed25519.PublicKey
 }
 
-func NewECDSA(privateKey *ecdsa.PrivateKey, publicKey *ecdsa.PublicKey) *ECDSA {
-	return &ECDSA{
+func NewEd25519(privateKey *ed25519.PrivateKey, publicKey *ed25519.PublicKey) *Ed25519 {
+	return &Ed25519{
 		Private: privateKey,
 		Public:  publicKey,
 	}
 }
 
-func (a *ECDSA) Sign(msg []byte) ([]byte, error) {
-	hash := sha256.Sum256(msg)
-	return ecdsa.SignASN1(rand.Reader, a.Private, hash[:])
+func (a *Ed25519) Sign(msg []byte) ([]byte, error) {
+	return ed25519.Sign(*a.Private, msg), nil
 }
 
-func (a *ECDSA) Verify(msg []byte, signature []byte) (bool, error) {
-	hash := sha256.Sum256(msg)
-	valid := ecdsa.VerifyASN1(a.Public, hash[:], signature)
-	var err error
-	if !valid {
-		err = errors.New("InvalidSignature")
-	}
-	return valid, err
+func (a *Ed25519) Verify(msg []byte, signature []byte) (bool, error) {
+	return ed25519.Verify(*a.Public, msg, signature), nil
 }
