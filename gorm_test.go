@@ -208,7 +208,7 @@ func TestSignedValue(t *testing.T) {
 	}
 
 	test := SignatureTestModel{
-		Name:    "Anonymous",
+		Name: "Anonymous",
 		Address: SignedValue{
 			Raw: "221b Baker St, Marylebone, London NW1 6XE",
 		},

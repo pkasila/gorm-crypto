@@ -13,8 +13,8 @@ type SignedValue struct {
 }
 
 type signedValueInternal struct {
-	Raw   []byte `json:"Raw"`
-	Sig   []byte `json:"Sig"`
+	Raw []byte `json:"Raw"`
+	Sig []byte `json:"Sig"`
 }
 
 // Scan deserializes and verifies value from DB, implements sql.Scanner interface
