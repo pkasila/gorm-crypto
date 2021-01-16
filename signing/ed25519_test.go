@@ -5,23 +5,23 @@ import (
 	"testing"
 )
 
-func TestECDSAEncryptDecryptCycle(t *testing.T) {
+func TestEd25519EncryptDecryptCycle(t *testing.T) {
 	// Generate key pair
-	privateKey, publicKey, err := helpers.ECDSAGenerateKeyPair()
+	privateKey, publicKey, err := helpers.Ed25519GenerateKeyPair()
 	if err != nil {
 		t.Fatalf("Failed to generate key pair: %s\n", err.Error())
 	}
 
-	rsa := NewECDSA(privateKey, publicKey)
+	algo := NewEd25519(&privateKey, &publicKey)
 
 	message := "A string... just for testing purposes :-)"
 
-	sig, err := rsa.Sign([]byte(message))
+	sig, err := algo.Sign([]byte(message))
 	if err != nil {
 		t.Fatalf("Failed sign data: %s\n", err.Error())
 	}
 
-	valid, err := rsa.Verify([]byte(message), sig)
+	valid, err := algo.Verify([]byte(message), sig)
 	if err != nil || !valid {
 		t.Fatalf("Failed verify data: %s\n", err.Error())
 	}

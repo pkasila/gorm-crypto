@@ -16,6 +16,20 @@ func Ed25519GenerateKeyPair() (ed25519.PrivateKey, ed25519.PublicKey, error) {
 	return publicKey, privateKey, nil
 }
 
+// Ed25519PrivateKeyToBytes private key to bytes
+func Ed25519PrivateKeyToBytes(priv *ed25519.PrivateKey) []byte {
+	x509Encoded, _ := x509.MarshalPKCS8PrivateKey(*priv)
+	pemEncoded := pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: x509Encoded})
+	return pemEncoded
+}
+
+// Ed25519PublicKeyToBytes private key to bytes
+func Ed25519PublicKeyToBytes(pub *ed25519.PublicKey) []byte {
+	x509Encoded, _ := x509.MarshalPKIXPublicKey(*pub)
+	pemEncoded := pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: x509Encoded})
+	return pemEncoded
+}
+
 // Ed25519BytesToPrivateKey bytes to private key
 func Ed25519BytesToPrivateKey(priv []byte) (*ed25519.PrivateKey, error) {
 	block, _ := pem.Decode(priv)
@@ -30,20 +44,6 @@ func Ed25519BytesToPublicKey(pub []byte) *ed25519.PublicKey {
 	blockPub, _ := pem.Decode(pub)
 	x509EncodedPub := blockPub.Bytes
 	genericPublicKey, _ := x509.ParsePKIXPublicKey(x509EncodedPub)
-	publicKey := genericPublicKey.(*ed25519.PublicKey)
-	return publicKey
-}
-
-// Ed25519PrivateKeyToBytes private key to bytes
-func Ed25519PrivateKeyToBytes(priv *ed25519.PrivateKey) []byte {
-	x509Encoded, _ := x509.MarshalPKCS8PrivateKey(priv)
-	pemEncoded := pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: x509Encoded})
-	return pemEncoded
-}
-
-// Ed25519PublicKeyToBytes private key to bytes
-func Ed25519PublicKeyToBytes(pub *ed25519.PublicKey) []byte {
-	x509Encoded, _ := x509.MarshalPKIXPublicKey(pub)
-	pemEncoded := pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: x509Encoded})
-	return pemEncoded
+	publicKey := genericPublicKey.(ed25519.PublicKey)
+	return &publicKey
 }
