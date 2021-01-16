@@ -7,7 +7,7 @@ import (
 )
 
 type EncryptedValue struct {
-	Raw interface{}	`json:"Raw"`
+	Raw interface{} `json:"Raw"`
 }
 
 // Scan decrypts and deserializes value from DB, implements sql.Scanner interface

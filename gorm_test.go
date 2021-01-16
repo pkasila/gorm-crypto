@@ -4,6 +4,7 @@ import (
 	"github.com/pkosilo/gorm-crypto/algorithms"
 	"github.com/pkosilo/gorm-crypto/helpers"
 	"github.com/pkosilo/gorm-crypto/serialization"
+	"github.com/pkosilo/gorm-crypto/signing"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"testing"
@@ -13,6 +14,12 @@ type TestModel struct {
 	gorm.Model
 	Name    string
 	Address EncryptedValue
+}
+
+type SignatureTestModel struct {
+	gorm.Model
+	Name    string
+	Address SignedValue
 }
 
 func TestRSA(t *testing.T) {
@@ -177,5 +184,49 @@ func TestFallbacks(t *testing.T) {
 
 	if err = db.Save(&testExtracted).Error; err != nil {
 		t.Fatalf("Cannot save TestModel entity: %s\n", err.Error())
+	}
+}
+
+func TestSignedValue(t *testing.T) {
+	privateKey, publicKey, err := helpers.ECDSAGenerateKeyPair()
+	if err != nil {
+		t.Fatalf("Failed to generate key pair: %s\n", err.Error())
+	}
+
+	ecdsa := signing.NewECDSA(privateKey, publicKey)
+
+	InitSigning([]signing.SignatureAlgorithm{ecdsa}, []serialization.Serializer{serialization.NewJSON()})
+
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("Cannot open test DB: %s\n", err.Error())
+	}
+
+	err = db.AutoMigrate(&SignatureTestModel{})
+	if err != nil {
+		t.Fatalf("Cannot migrate: %s\n", err.Error())
+	}
+
+	test := SignatureTestModel{
+		Name: "Anonymous",
+		Address: SignedValue{
+			Raw: "221b Baker St, Marylebone, London NW1 6XE",
+		},
+	}
+
+	if err = db.Create(&test).Error; err != nil {
+		t.Fatalf("Cannot create SignatureTestModel entity: %s\n", err.Error())
+	}
+
+	var testExtracted SignatureTestModel
+	if err = db.Find(&testExtracted, test.ID).Error; err != nil {
+		t.Fatalf("Cannot find SignatureTestModel entity: %s\n", err.Error())
+	}
+
+	if test.Address.Raw != testExtracted.Address.Raw {
+		t.Fatalf("Fields aren't equal: %s != %s\n", test.Address.Raw.(string), testExtracted.Address.Raw.(string))
+	}
+	if !testExtracted.Address.Valid {
+		t.Fatalf("Address is not valid!\n")
 	}
 }
