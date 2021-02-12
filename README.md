@@ -134,3 +134,62 @@ if err := db.Find(&application, 1).Error; err != nil {
 
 fmt.Printf("Decrypted (raw) address: %s", application.Address.Raw.(string))
 ```
+
+## Signing capabilties
+To initialize library for signing with `SignedValue` you should call `InitSigning` function like this:
+```golang
+gormcrypto.InitSigning([]signing.SignatureAlgorithm{signing.NewECDSA(privateKey, publicKey)}, []serialization.Serializer{serialization.NewJSON()})
+```
+Then you can use `SignedValue` in you structs.
+### Signing algorithms
+#### ECDSA
+Example:
+```golang
+// Generate key pair
+privateKey, publicKey, _ := helpers.ECDSAGenerateKeyPair()
+algo := NewECDSA(privateKey, publicKey)
+```
+#### Ed25519
+Example:
+```golang
+// Generate key pair
+privateKey, publicKey, _ := helpers.Ed25519GenerateKeyPair()
+algo := NewEd25519(&privateKey, &publicKey)
+```
+### `SignedValue`
+#### How to sign?
+There is an example of usage of `SignedValue`:
+```golang
+application := Application {
+  Name: "Anonymous",
+  Phone: "+375290000000",
+  Email: "example@example.com",
+  Address: gormcrypto.SignedValue{Raw: "Oktyabr'skaya Ploshchad' 1, Minsk 220030"},
+}
+
+if err = models.DB.Create(&model).Error; err != nil {
+  panic(err)
+}
+```
+#### How to access data and verify integrity?
+You can access data by using `Raw` field:
+```golang
+var application Application
+
+if err := db.Find(&application, 1).Error; err != nil {
+  panic(err)
+}
+
+fmt.Printf("Raw address: %s", application.Address.Raw.(string))
+```
+And you can verify integrity by accessing `Valid` field:
+```golang
+valid := application.Address.Valid // true if is valid, false if is not
+```
+**Remember**: if you change `Raw` field, then the `Valid` field won't be
+affected, so after changing `Raw` field you cannot trust `Valid` field.
+
+#### Intented use case
+`SignedValue` is not intended to be used for multiple reads and writes.
+It is intended to be used to save information to the database with signature
+and then read it after sometime.
