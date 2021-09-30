@@ -1,7 +1,7 @@
 package signing
 
 import (
-	"github.com/pkosilo/gorm-crypto/helpers"
+	"github.com/pkasila/gorm-crypto/helpers"
 	"testing"
 )
 

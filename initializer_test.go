@@ -1,9 +1,9 @@
 package gormcrypto
 
 import (
-	"github.com/pkosilo/gorm-crypto/algorithms"
-	"github.com/pkosilo/gorm-crypto/helpers"
-	"github.com/pkosilo/gorm-crypto/serialization"
+	"github.com/pkasila/gorm-crypto/algorithms"
+	"github.com/pkasila/gorm-crypto/helpers"
+	"github.com/pkasila/gorm-crypto/serialization"
 	"testing"
 )
 
