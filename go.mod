@@ -1,4 +1,4 @@
-module github.com/pkosilo/gorm-crypto
+module github.com/pkasila/gorm-crypto
 
 go 1.16
 
