@@ -33,6 +33,10 @@ func (j *EncryptedValue) Scan(value interface{}) error {
 				continue
 			}
 		}
+
+		if selectionError == nil {
+			break
+		}
 	}
 
 	if selectionError != nil {
