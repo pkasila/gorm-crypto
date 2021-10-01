@@ -4,7 +4,7 @@ Encrypts any value of JSON compatible type
 # Installation
 To install `gorm-crypto` you need to, as usual, run this command:
 ```shell
-go get github.com/pkosilo/gorm-crypto
+go get github.com/pkasila/gorm-crypto
 ```
 
 # How to use it?
