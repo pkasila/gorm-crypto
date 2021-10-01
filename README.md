@@ -2,6 +2,9 @@
 Encrypts any value of JSON compatible type
 
 # Installation
+**REMEMBER:** Generics are only available on GoLang
+1.17 (with `-gcflags=-G=3`) and on 1.18 and later.
+
 To install `gorm-crypto` you need to, as usual, run this command:
 ```shell
 go get github.com/pkasila/gorm-crypto

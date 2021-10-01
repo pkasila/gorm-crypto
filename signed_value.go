@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-type SignedValue struct {
+type SignedValue[T any] struct {
 	Raw   interface{} `json:"Raw"`
 	Valid bool        `json:"Valid"`
 }
@@ -18,7 +18,7 @@ type signedValueInternal struct {
 }
 
 // Scan deserializes and verifies value from DB, implements sql.Scanner interface
-func (j *SignedValue) Scan(value interface{}) error {
+func (j *SignedValue[T]) Scan(value interface{}) error {
 	bytes, ok := value.([]byte)
 	if !ok {
 		return errors.New(fmt.Sprint("Failed to unmarshal value:", value))
@@ -61,7 +61,7 @@ func (j *SignedValue) Scan(value interface{}) error {
 }
 
 // Value returns serialized value with signature, implement driver.Valuer interface
-func (j SignedValue) Value() (driver.Value, error) {
+func (j SignedValue[T]) Value() (driver.Value, error) {
 	serializer := SignatureSerializers[0]
 
 	bytes, err := serializer.Serialize(j.Raw)

@@ -6,12 +6,12 @@ import (
 	"fmt"
 )
 
-type EncryptedValue struct {
-	Raw interface{} `json:"Raw"`
+type EncryptedValue[T any] struct {
+	Raw T `json:"Raw"`
 }
 
 // Scan decrypts and deserializes value from DB, implements sql.Scanner interface
-func (j *EncryptedValue) Scan(value interface{}) error {
+func (j *EncryptedValue[T]) Scan(value interface{}) error {
 	bytes, ok := value.([]byte)
 	if !ok {
 		return errors.New(fmt.Sprint("Failed to unmarshal value:", value))
@@ -43,13 +43,13 @@ func (j *EncryptedValue) Scan(value interface{}) error {
 		return selectionError
 	}
 
-	j.Raw = (*encValue).(map[string]interface{})["Raw"]
+	j.Raw = (*encValue).(map[string]T)["Raw"]
 
 	return nil
 }
 
 // Value returns serialized and encrypted value, implement driver.Valuer interface
-func (j EncryptedValue) Value() (driver.Value, error) {
+func (j EncryptedValue[T]) Value() (driver.Value, error) {
 	bytes, err := Serializers[0].Serialize(j)
 
 	if err != nil {
